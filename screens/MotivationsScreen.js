@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { getMotivations } from "../src/services/firestore"; // <-- pegando do Firebase
+import { getMotivations } from "../src/services/firestore";
 
 export default function MotivationsScreen() {
-  const [motivations, setMotivations] = useState([]); // lista vinda do Firebase
+  const [motivations, setMotivations] = useState([]);
   const [frase, setFrase] = useState("");
 
   useEffect(() => {
     async function load() {
       const data = await getMotivations(); 
-      setMotivations(data); // salva as frases do Firebase
+      setMotivations(data);
     }
     load();
   }, []);
 
   function getRandomMotivation() {
-    if (motivations.length === 0) return; // evita erro caso não carregue
+    if (motivations.length === 0) return;
 
     const random =
       motivations[Math.floor(Math.random() * motivations.length)];
 
-    // OBS: Firebase retorna objeto sem id por padrão, então usamos random.text
     setFrase(random.text);
   }
 
