@@ -1,18 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { MOTIVATIONS } from "../data/MotivationsCard.js";
+import { getMotivations } from "../src/services/firestore"; // <-- pegando do Firebase
 
 export default function MotivationsScreen() {
+  const [motivations, setMotivations] = useState([]); // lista vinda do Firebase
   const [frase, setFrase] = useState("");
 
+  useEffect(() => {
+    async function load() {
+      const data = await getMotivations(); 
+      setMotivations(data); // salva as frases do Firebase
+    }
+    load();
+  }, []);
+
   function getRandomMotivation() {
-    const random = MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
+    if (motivations.length === 0) return; // evita erro caso não carregue
+
+    const random =
+      motivations[Math.floor(Math.random() * motivations.length)];
+
+    // OBS: Firebase retorna objeto sem id por padrão, então usamos random.text
     setFrase(random.text);
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Motive-se 🎉</Text>
+
       <Pressable style={styles.button} onPress={getRandomMotivation}>
         <Text style={styles.buttonText}>Gerar frase motivacional</Text>
       </Pressable>
